@@ -7,7 +7,7 @@
 ;; URL: https://github.com/ahungry/dungeon-mode
 ;; Version: 0.0.0
 ;; Keywords: ahungry emacs geben helm projectile debug
-;; Package-Requires: ((emacs "24"))
+;; Package-Requires: ((emacs "24") (cl-lib "0.5"))
 
 ;; This file is not part of GNU Emacs
 
@@ -37,18 +37,21 @@
 
 ;;; Code:
 
+(eval-and-compile
+  (require 'cl-lib))
+
 (defvar baby-gnu-image "
       ,,
 `-----O=
 |''''|
 ")
 
-(defvar baby-gnu-food-count 5)
+(defvar baby-gnu-food-count 1)
 
 (defvar baby-gnu-wants
   (list
-   "I'm hungry, feed me!"
-   "I'm feeling lonely over here, will you come play a game with me?"
+   "I'm hungry, feed me! (try M-x baby-gnu-feed)"
+   "I'm feeling lonely over here, will you come play a game with me? (try M-x pong and pretend its the GNU)"
    "Can we do something GNU today?"
    ))
 
@@ -72,16 +75,23 @@
   (interactive)
   (if (> baby-gnu-food-count 0)
       (progn
-        (decf baby-gnu-food-count)
+        (cl-decf baby-gnu-food-count)
         (baby-gnu-say "Thanks!  That hit the spot!"))
     (progn
       (baby-gnu-say "I'm so hungry...please can I have a bite? I
       heard you can earn food by making some commits..."))))
 
-(defadvice vc-next-action (around baby-gnu-get-food)
+(defadvice vc-next-action (before baby-gnu-get-food)
   "Add some food for the baby gnu when we commit."
-  (message "Ran advice")
-  (incf baby-gnu-food-count (random 5)))
+  (progn
+    (cl-incf baby-gnu-food-count (random 3))))
+
+(defadvice with-editor-finish (before baby-gnu-get-food)
+  "Add some food for the baby gnu when we commit."
+  (progn
+    (cl-incf baby-gnu-food-count (random 3))))
+
+(run-with-idle-timer 5 10 'baby-gnu-say-want)
 
 (provide 'baby-gnu)
 
