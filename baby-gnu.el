@@ -78,8 +78,9 @@
       (baby-gnu-say "I'm so hungry...please can I have a bite? I
       heard you can earn food by making some commits..."))))
 
-(defadvice vc-next-action (after baby-gnu-get-food)
+(defadvice vc-next-action (before baby-gnu-get-food)
   "Add some food for the baby gnu when we commit."
+  (message "Ran advice")
   (incf baby-gnu-food-count (random 5)))
 
 (provide 'baby-gnu)
