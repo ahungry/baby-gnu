@@ -95,4 +95,4 @@
 
 (provide 'baby-gnu)
 
-;;; baby-gnu ends here
+;;; baby-gnu.el ends here
